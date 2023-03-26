@@ -33,11 +33,11 @@ public:
     }
 
     auto end() {
-        return data_.end();
+        return data_.begin() + len_;
     }
 
     auto end() const {
-        return data_.end();
+        return data_.begin() + len_;
     }
 
     size_t size() const {
@@ -46,6 +46,10 @@ public:
 
     bool empty() const {
         return (len_ == 0);
+    }
+
+    void clear() {
+        len_ = 0;
     }
 
 private:

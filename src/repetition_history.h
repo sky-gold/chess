@@ -23,7 +23,15 @@ public:
         data_[version_][len_[version_]++] = hash;
     }
 
-    uint8_t count(Hash hash) {
+    void undo() {
+        assert(len_[version_] > 0);
+        --len_[version_];
+        if (len_[version_] == 0 && version_ > 0) {
+            --version_;
+        }
+    }
+
+    uint8_t count(Hash hash) const {
         uint8_t result = 0;
         for (uint8_t i = 0; i < len_[version_]; ++i) {
             if (data_[version_][i] == hash) {
@@ -39,11 +47,6 @@ public:
         }
         ++version_;
         len_[version_] = 0;
-    }
-
-    void unclear() {
-        assert(version_ > 0);
-        --version_;
     }
 
 private:

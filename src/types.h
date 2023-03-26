@@ -3,6 +3,8 @@
 
 #include <cstdint>
 
+#include <iostream>
+
 using Move = uint16_t; // 0-5 = from 6-11 = to 12-15 = move flag
 
 const Move MOVE_NULL = 0;
@@ -45,6 +47,9 @@ const Bitboard COL_E = COL_D >> 1;
 const Bitboard COL_F = COL_E >> 1;
 const Bitboard COL_G = COL_F >> 1;
 const Bitboard COL_H = COL_G >> 1;
+
+const Bitboard BOARD_CORE = (COL_D | COL_E) & (ROW_4 | ROW_5);
+const Bitboard BOARD_CENTER = (COL_C | COL_D | COL_E | COL_F) & (ROW_3 | ROW_4 | ROW_5 | ROW_6);
 
 using Hash = uint64_t;
 
