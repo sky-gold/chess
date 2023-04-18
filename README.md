@@ -16,3 +16,8 @@
 * Multithreading
 * [Zobrist hashing](https://en.wikipedia.org/wiki/Zobrist_hashing)
 * [Transposition table](https://en.wikipedia.org/wiki/Transposition_table) based on Shared Hash Table
+## Screenshots
+![1](/screenshot/1.jpg)
+![2](/screenshot/2.jpg)
+![3](/screenshot/3.jpg)
+![4](/screenshot/4.jpg)
