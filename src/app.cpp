@@ -284,7 +284,7 @@ void App::draw_game_result_() {
                 explanation_text.setString("by fifty-move rule");
             } else if (board_.is_repetition_rule()) {
                 explanation_text.setString("by repetition rule");
-            } else if (popcount(board_.color_bitboard(WHITE) | board_.color_bitboard(BLACK))) {
+            } else if (popcount(board_.color_bitboard(WHITE) | board_.color_bitboard(BLACK)) == 2) {
                 explanation_text.setString("impossibility of checkmate");
             } else {
                 explanation_text.setString("by stalemate");
