@@ -26,6 +26,4 @@ namespace bishop_logic {
 
 }
 
-#include "bishop.cpp"
-
 #endif //CHESS_BISHOP_H

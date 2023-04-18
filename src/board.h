@@ -39,7 +39,10 @@ public:
     bool is_50rule() const;
     Move last_move() const;
     Hash hash() const;
+
+    bool legal_moves_ready() const;
     MoveList get_legal_moves() const;
+    bool king_in_check() const;
 
     bool is_legal(Move move) const;
 
@@ -93,6 +96,6 @@ private:
     void calc_legal_moves_() const;
 };
 
-#include "board.cpp"
+//#include "board.cpp"
 
 #endif //CHESS_BOARD_H

@@ -5,41 +5,38 @@
 #include <vector>
 #include <thread>
 #include <mutex>
+#include <shared_mutex>
 
 #include "types.h"
-
-const size_t TRANSPOSITION_TABLE_SIZE = (1ULL << 23);
-const size_t MUTEX_BLOCK_SIZE = TRANSPOSITION_TABLE_SIZE / 32;
 
 class TranspositionTable {
 public:
     struct Element {
-        Element(Hash hash, size_t deep, int evaluation, Move best_move) : hash(hash), deep(deep),
-                                                                          evaluation(evaluation),
-                                                                          best_move(best_move) {};
+        Element() = default;
+        Element(Hash hash, size_t deep, EvalType evaluation, Move best_move, bool final);
         Hash hash = 0;
         size_t deep = 0;
-        int evaluation = 0;
+        EvalType evaluation = 0;
         Move best_move = MOVE_NULL;
+        bool final = false;
     };
+
+    TranspositionTable();
+    ~TranspositionTable();
     void clear();
 
-    size_t count(Hash hash) const;
+    Element get(Hash hash) const;
 
-    void update(Hash hash, size_t deep, int evaluation, Move best_move = MOVE_NULL);
-
-    std::pair<int, Move> get(Hash hash) const;
+    void update(Element element);
 
 private:
+    constexpr static const size_t TRANSPOSITION_TABLE_SIZE = (1ULL << 20);
 
+    mutable std::shared_mutex mtx_;
 
-    mutable std::array<std::mutex, TRANSPOSITION_TABLE_SIZE / MUTEX_BLOCK_SIZE> mtx_;
-//    mutable std::mutex mtx_;
-    std::array<std::vector<Element>, TRANSPOSITION_TABLE_SIZE> data_;
-    std::array<size_t, TRANSPOSITION_TABLE_SIZE> last_version_;
-    size_t version_ = 0;
+    Element* data_;
 };
 
-#include "transposition_table.cpp"
+//#include "transposition_table.cpp"
 
 #endif //CHESS_TRANSPOSITION_TABLE_H

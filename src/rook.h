@@ -25,6 +25,6 @@ namespace rook_logic {
     void init();
 }
 
-#include "rook.cpp"
+//#include "rook.cpp"
 
 #endif //CHESS_ROOK_H

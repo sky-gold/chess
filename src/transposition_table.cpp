@@ -2,63 +2,41 @@
 
 #include <cassert>
 
+TranspositionTable::TranspositionTable() {
+    data_ = new Element[TRANSPOSITION_TABLE_SIZE];
+}
+
+TranspositionTable::~TranspositionTable() {
+    delete[] data_;
+}
+
+TranspositionTable::Element::Element(Hash hash, size_t deep, EvalType evaluation, Move best_move, bool final) : hash(
+        hash), deep(deep), evaluation(evaluation), best_move(best_move), final(final) {}
 
 void TranspositionTable::clear() {
-    ++version_;
+    std::unique_lock lock(mtx_);
+    for (size_t i = 0; i < TRANSPOSITION_TABLE_SIZE; ++i) {
+        data_[i] = Element();
+    }
 }
 
-size_t TranspositionTable::count(Hash hash) const {
-    size_t bucket = hash & (TRANSPOSITION_TABLE_SIZE - 1);
-    std::lock_guard<std::mutex> lg(mtx_[bucket / MUTEX_BLOCK_SIZE]);
-//    std::lock_guard<std::mutex> lg(mtx_);
-    if (last_version_[bucket] != version_) return 0;
-    size_t i = 0;
-    while (i < data_[bucket].size()) {
-        if (data_[bucket][i].hash == hash) {
-            return data_[bucket][i].deep;
-        }
-        ++i;
-    }
-    return 0;
+TranspositionTable::Element TranspositionTable::get(Hash hash) const {
+    std::shared_lock lock(mtx_);
+    return data_[hash & (TRANSPOSITION_TABLE_SIZE - 1)];
 }
 
-void TranspositionTable::update(Hash hash, size_t deep, int evaluation, Move best_move) {
-    size_t bucket = hash & (TRANSPOSITION_TABLE_SIZE - 1);
-    std::lock_guard<std::mutex> lg(mtx_[bucket / MUTEX_BLOCK_SIZE]);
-//    std::lock_guard<std::mutex> lg(mtx_);
-    if (last_version_[bucket] != version_) {
-        last_version_[bucket] = version_;
-        data_[bucket].clear();
+void TranspositionTable::update(TranspositionTable::Element element) {
+    std::unique_lock lock(mtx_);
+    if (element.final && (element.evaluation == 0 || abs(element.evaluation) > EVAL_MAX)) {
+        element.deep = 1000000;
     }
-    size_t i = 0;
-    while (i < data_[bucket].size()) {
-        if (data_[bucket][i].hash == hash) {
-            if (data_[bucket][i].deep < deep) {
-                data_[bucket][i].deep = deep;
-                data_[bucket][i].evaluation = evaluation;
-                data_[bucket][i].best_move = best_move;
-            }
-            return;
-        }
-        ++i;
+    size_t index = element.hash & (TRANSPOSITION_TABLE_SIZE - 1);
+    if (data_[index].hash != element.hash) {
+        data_[index] = element;
+        return;
     }
-    data_[bucket].push_back(Element(hash, deep, evaluation, best_move));
-}
-
-std::pair<int, Move> TranspositionTable::get(Hash hash) const {
-    size_t bucket = hash & (TRANSPOSITION_TABLE_SIZE - 1);
-    std::lock_guard<std::mutex> lg(mtx_[bucket / MUTEX_BLOCK_SIZE]);
-//    std::cout << "! " << data_[bucket].size() << std::endl;
-//    std::lock_guard<std::mutex> lg(mtx_);
-    assert(last_version_[bucket] == version_);
-//    if (last_version_[bucket] != version_) return false;
-    size_t i = 0;
-    while (i < data_[bucket].size()) {
-        if (data_[bucket][i].hash == hash) {
-            return {data_[bucket][i].evaluation, data_[bucket][i].best_move};
-        }
-        ++i;
+    if (data_[index].deep < element.deep) {
+        data_[index] = element;
+        return;
     }
-    assert(0);
-    return {0, MOVE_NULL};
 }

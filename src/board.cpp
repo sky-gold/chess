@@ -1,9 +1,6 @@
 #include "board.h"
 
-#include <iostream>
-
 Board::Board(std::string fen_string) {
-//    std::cout << "version_=" << version_ << std::endl;
     for (size_t i = 0; i < 64; ++i) {
         board_[i] = FIGURE_NULL;
     }
@@ -56,7 +53,6 @@ Board::Board(std::string fen_string) {
     int x = 7;
     int y = 0;
     int i = 0;
-//    std::cout << "board_string=" << board_string << std::endl;
     while (i < board_string.size()) {
         if ('1' <= board_string[i] && board_string[i] <= '8') {
             y += board_string[i] - '0';
@@ -208,6 +204,14 @@ MoveList Board::get_legal_moves() const {
     return legal_moves_;
 }
 
+bool Board::legal_moves_ready() const {
+    return legal_moves_calced;
+}
+
+bool Board::king_in_check() const {
+    return is_attacked_(lsb(figure_bitboard(KING | turn_)), (turn_ ^ 1));
+}
+
 bool Board::is_legal(Move move) const {
     for (auto legal_move: get_legal_moves()) {
         if (legal_move == move) {
@@ -232,7 +236,6 @@ void Board::change_pos_(Square pos, Figure figure) {
 }
 
 void Board::do_move(Move move) {
-//    std::cout << "do_move " << get_string_move(move) << std::endl;
     ++step_count_;
     Square pos1 = move & ((1 << 6) - 1);
     Square pos2 = (move >> 6) & ((1 << 6) - 1);
@@ -316,16 +319,12 @@ void Board::do_move(Move move) {
         repetition_history_.clear();
         repetition_history_.add_pos(hash());
     }
-//    std::cout << "turn_=" << turn_ << std::endl;
-
-//    std::cout << "turn_=" << turn_ << std::endl;
     moves_.emplace_back(move, changes);
     legal_moves_calced = false;
 
 }
 
 void Board::undo_last_move() {
-//    std::cout << "undo_last_move" << std::endl;
     --step_count_;
     Move move = moves_.back().first;
     Changes changes = moves_.back().second;
@@ -532,18 +531,15 @@ void Board::add_to_legal_(const std::vector<uint16_t> &moves) const {
 
 void Board::add_to_legal_(uint16_t move) const {
     if (move == MOVE_NULL) return;
-//    std::cout << "add_to_legal_ " << get_string_move(move) << std::endl;
     Changes changes = fast_move_(move);
     Square turn_king = lsb(figure_bitboard_[KING | turn_]);
     if (!is_attacked_(turn_king, turn_ ^ 1)) {
-//        std::cout << "OK" << std::endl;
         legal_moves_.push_back(move);
     }
     fast_undo_(move, changes);
 }
 
 void Board::calc_legal_moves_() const {
-//    std::cout << "calc_legal_moves" << std::endl;
     legal_moves_.clear();
     if (is_50rule() || is_repetition_rule()) return;
     if (((color_bitboard_[WHITE] - 1) & color_bitboard_[WHITE]) == 0 &&
@@ -600,12 +596,6 @@ void Board::calc_legal_moves_() const {
 }
 
 std::string Board::get_string() const {
-    std::cout << "! " << (int)repetition_history_.count(hash()) << std::endl;
-    std::cout << "legal_moves=" << std::endl;
-    for (auto move: legal_moves_) {
-        std::cout << get_string_move(move) << " ";
-    }
-    std::cout << std::endl;
     std::string result;
     result += "fen=" + fen() + "\n";
     for (int i = 7; i >= 0; --i) {
@@ -615,6 +605,5 @@ std::string Board::get_string() const {
         }
         result.push_back('\n');
     }
-    result += "step_count_=" + std::to_string(step_count()) + "\n";
     return result;
-}//*/
+}

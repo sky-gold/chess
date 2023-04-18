@@ -57,6 +57,6 @@ Magic<Value> get_magic(Bitboard mask, uint8_t added_space) {
 }
 
 
-#include "magic_bitboard.cpp"
+//#include "magic_bitboard.cpp"
 
 #endif //CHESS_MAGIC_BITBOARD_H

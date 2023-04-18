@@ -13,5 +13,8 @@ SET(CMAKE_CXX_FLAGS_INIT "${COMMON_FLAGS} -std=c++17")
 set(CMAKE_EXE_LINKER_FLAGS "-static")
 
 find_package(SFML 2.5.1 COMPONENTS graphics REQUIRED)
-add_executable(chess src/main.cpp)
+
+file(GLOB SRCFILES "src/*.cpp")
+add_executable(chess ${SRCFILES})
+#add_executable(chess src/main.cpp src/misc.cpp src/magic_bitboard.cpp src/sliding_figure.cpp src/bishop.cpp src/rook.cpp src/queen.cpp src/jumping_figure.cpp src/king.cpp src/knight.cpp src/pawn.cpp src/zobrist_hash.cpp src/repetition_history.cpp src/move_list.cpp src/board.cpp src/material_evaluate.cpp src/positional_evaluate.cpp src/evaluate.cpp src/move_ordering.cpp src/transposition_table.cpp src/search.cpp)
 target_link_libraries(chess sfml-graphics -static-libgcc -static-libstdc++)

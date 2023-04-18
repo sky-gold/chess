@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "types.h"
+#include "magic_bitboard.h"
 #include "misc.h"
 
 namespace pawn_logic {
@@ -25,6 +26,6 @@ namespace pawn_logic {
     void init();
 }
 
-#include "pawn.cpp"
+//#include "pawn.cpp"
 
 #endif //CHESS_PAWN_H

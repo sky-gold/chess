@@ -3,6 +3,7 @@
 
 #include "types.h"
 #include "jumping_figure.h"
+#include "magic_bitboard.h"
 #include "misc.h"
 
 namespace king_logic {
@@ -22,6 +23,6 @@ namespace king_logic {
     void init();
 }
 
-#include "king.cpp"
+//#include "king.cpp"
 
 #endif //CHESS_KING_H

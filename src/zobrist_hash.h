@@ -13,6 +13,6 @@ namespace zobrist_hashing {
     void init();
 }
 
-#include "zobrist_hash.cpp"
+//#include "zobrist_hash.cpp"
 
 #endif //CHESS_ZOBRIST_HASH_H

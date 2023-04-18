@@ -25,6 +25,6 @@ std::string get_string_move(Move move);
 
 uint8_t popcount(Bitboard b);
 
-#include "misc.cpp"
+//#include "misc.cpp"
 
 #endif //CHESS_MISC_H

@@ -10,47 +10,27 @@ const size_t MOVE_LIST_MAX = 218;
 
 class MoveList {
 public:
-    MoveList() = default;
+    MoveList();
 
-    void push_back(Move move) {
-        data_[len_++] = move;
-    }
+    void push_back(Move move);
 
-    Move &operator[](uint8_t index) {
-        return data_[index];
-    }
+    Move &operator[](uint8_t index);
 
-    Move operator[](uint8_t index) const {
-        return data_[index];
-    }
+    Move operator[](uint8_t index) const;
 
-    auto begin() {
-        return data_.begin();
-    }
+    Move *begin();
 
-    auto begin() const {
-        return data_.begin();
-    }
+    [[nodiscard]] const Move *begin() const;
 
-    auto end() {
-        return data_.begin() + len_;
-    }
+    Move *end();
 
-    auto end() const {
-        return data_.begin() + len_;
-    }
+    [[nodiscard]] const Move *end() const;
 
-    size_t size() const {
-        return len_;
-    }
+    [[nodiscard]] size_t size() const;
 
-    bool empty() const {
-        return (len_ == 0);
-    }
+    [[nodiscard]] bool empty() const;
 
-    void clear() {
-        len_ = 0;
-    }
+    void clear();
 
 private:
     std::array<Move, MOVE_LIST_MAX> data_;

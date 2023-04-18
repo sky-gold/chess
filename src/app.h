@@ -3,7 +3,6 @@
 
 #include <SFML/Graphics.hpp>
 #include <cassert>
-#include <iostream>
 #include <thread>
 #include <future>
 #include <chrono>
@@ -69,18 +68,16 @@ private:
     sf::RectangleShape time_selector_;
     float choosed_time_ = 0.1334;
 
-    bool bot_is_working_ = false;
-    clock_t bot_work_start_ = 0;
+    search::Search search_container;
+    clock_t search_start_ = 0;
 
     sf::RectangleShape undo_button_;
     sf::RectangleShape reset_button_;
 
     bool undo_move_ = false;
     bool reset_board_ = false;
-
-    std::future<Move> bot_move_;
 };
 
-#include "app.cpp"
+//#include "app.cpp"
 
 #endif //CHESS_APP_H

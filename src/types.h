@@ -3,8 +3,6 @@
 
 #include <cstdint>
 
-#include <iostream>
-
 using Move = uint16_t; // 0-5 = from 6-11 = to 12-15 = move flag
 
 const Move MOVE_NULL = 0;
@@ -53,5 +51,10 @@ const Bitboard BOARD_CENTER = (COL_C | COL_D | COL_E | COL_F) & (ROW_3 | ROW_4 |
 
 using Hash = uint64_t;
 
+using EvalType = int16_t;
+
+const EvalType EVAL_INF = 20000;
+const EvalType EVAL_MAX = 10000;
+const EvalType EVAL_ZERO = 0;
 
 #endif //CHESS_TYPES_H

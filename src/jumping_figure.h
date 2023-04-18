@@ -12,6 +12,6 @@ namespace jumping_figure {
 
 }
 
-#include "jumping_figure.cpp"
+//#include "jumping_figure.cpp"
 
 #endif //CHESS_JUMPING_FIGURE_H

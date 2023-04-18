@@ -19,6 +19,6 @@ namespace queen_logic {
     get_moves(Square pos, Bitboard turn_bitboard, Bitboard opposite_bitboard);
 }
 
-#include "queen.cpp"
+//#include "queen.cpp"
 
 #endif //CHESS_QUEEN_H

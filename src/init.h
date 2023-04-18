@@ -9,23 +9,40 @@
 #include "zobrist_hash.h"
 
 #include "evaluate.h"
+#include "material_evaluate.h"
+#include "positional_evaluate.h"
+
 
 namespace init {
-    void init() {
-        init_figure_material();
-        std::cout << "ROOK" << std::endl;
+
+    void init_evaluate() {
+        positional_evaluate::init();
+        material_evaluate::init();
+        evaluate::init_figure_material();
+
+    }
+
+    void init_figures() {
         rook_logic::init();
-        std::cout << "BISHOP" << std::endl;
         bishop_logic::init();
-        std::cout << "KING" << std::endl;
         king_logic::init();
-        std::cout << "KNIGHT" << std::endl;
         knight_logic::init();
-        std::cout << "PAWN" << std::endl;
         pawn_logic::init();
-        std::cout << "ZOBRIST" << std::endl;
+    }
+
+    void init_hash() {
         zobrist_hashing::init();
-        std::cout << "END" << std::endl;
+
+    }
+
+    void init() {
+        std::cout << "Evaluate Init..." << std::endl;
+        init_evaluate();
+        std::cout << "Figures Init..." << std::endl;
+        init_figures();
+        std::cout << "Hash Init..." << std::endl;
+        init_hash();
+        std::cout << "Init end" << std::endl;
     }
 }
 

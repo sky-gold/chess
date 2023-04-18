@@ -1,11 +1,8 @@
-//
-// Created by nikita on 23.03.2023.
-//
+#include "app.h"
 
-clock_t TIME_SELECTOR_MAX = 15000;
+#define TIME_SELECTOR_MAX 15000
 
 App::App() {
-    std::cout << "App()" << std::endl;
     window_.create(sf::VideoMode(1200, 800), "chess");
     figure_texture.loadFromFile("src/img/figures.png");
     font_.loadFromFile("src/fonts/font.ttf");
@@ -22,7 +19,6 @@ std::pair<uint8_t, uint8_t> App::get_coordinates(Square sq) const {
 }
 
 void App::run() {
-    std::cout << "run()" << std::endl;
     sf::Clock clock;
 
     float FPS = 200;
@@ -60,19 +56,23 @@ void App::update_() {
         if (event.type == sf::Event::Closed)
             window_.close();
     }
-    if (!bot_is_working_ && reset_board_) {
+    if (reset_board_) {
+        if (search_container.is_working()) {
+            search_container.stop();
+        }
         board_ = Board(fen_start);
         reset_board_ = false;
         undo_move_ = false;
         human_turn_ = WHITE;
         choosed_square_ = SQUARE_NULL;
     }
-    if (!bot_is_working_ && undo_move_) {
-//        std::cout << "!!!!!!!!!!!!!!!!!!" << std::endl;
+    if (undo_move_) {
+        if (search_container.is_working()) {
+            search_container.stop();
+        }
         if (board_.last_move() != MOVE_NULL) {
             board_.undo_last_move();
         }
-//        std::cout << "!!!!!!!!!!!!!!!!!!" << std::endl;
         if (human_turn_ != 2 && board_.turn() != human_turn_ && board_.last_move() != MOVE_NULL) {
             board_.undo_last_move();
         }
@@ -134,23 +134,19 @@ void App::update_() {
     //DOING MOVE
     if (board_.state() == Board::State::None) {
         if (board_.state() == Board::State::None && board_.turn() == human_turn_ && make_move != MOVE_NULL && board_.is_legal(make_move)) {
-            std::cout << "do_move " << get_string_move(make_move) << std::endl;
             board_.do_move(make_move);
             choosed_square_ = SQUARE_NULL;
         }
-        if (board_.state() == Board::State::None && board_.turn() != human_turn_ && !bot_is_working_) {
-            bot_is_working_ = true;
-            auto max_time = (clock_t) (TIME_SELECTOR_MAX * choosed_time_);
-            bot_move_ = std::async(std::launch::async, search::iterative_deepening, board_, max_time);
-            bot_work_start_ = clock();
+        if (board_.state() == Board::State::None && board_.turn() != human_turn_ && !(search_container.is_working())) {
+            search_container.set_board(board_);
+            search_start_ = clock();
         }
-        if (bot_is_working_ && bot_move_.wait_for(std::chrono::milliseconds(1)) == std::future_status::ready) {
-            Move move = bot_move_.get();
-            std::cout << "moves takes " << (clock() - bot_work_start_) << std::endl;
-            std::cout << "do_move " << get_string_move(move) << std::endl;
+        auto max_time = (clock_t) (TIME_SELECTOR_MAX * choosed_time_);
+        if (search_container.is_working() && clock() > search_start_ + max_time) {
+            search_container.stop();
+            Move move = search_container.get_move();
             board_.do_move(move);
             choosed_square_ = SQUARE_NULL;
-            bot_is_working_ = false;
         }
     }
 }
@@ -309,8 +305,8 @@ void App::draw_time_selector_() {
     rect.setPosition(800.f, 80.f);
     window_.draw(rect);
 
-    if (bot_is_working_) {
-        float passed_time = ((float)(clock() - bot_work_start_) / TIME_SELECTOR_MAX);
+    if (search_container.is_working()) {
+        float passed_time = ((float)(clock() - search_start_) / TIME_SELECTOR_MAX);
         rect.setSize(sf::Vector2f(320.f * passed_time, 20.f));
         rect.setFillColor(sf::Color::Green);
         rect.setPosition(800.f, 80.f);
@@ -401,4 +397,3 @@ void App::draw_figures_() {
         }
     }
 }
-#include "app.h"

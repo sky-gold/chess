@@ -19,6 +19,6 @@ namespace sliding_figure {
 
 }
 
-#include "sliding_figure.cpp"
+//#include "sliding_figure.cpp"
 
 #endif //CHESS_SLIDING_FIGURE_H
